@@ -1,0 +1,417 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MJ Naheulbeuk Pro Final</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Crimson+Text&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg:#f5e6c8;
+--card:#ede0b0;
+--accent:#8b1a1a;
+--border:#a0824a;
+}
+
+body{
+margin:0;
+font-family:'Crimson Text';
+background:url("https://images.unsplash.com/photo-1520975922284-9c1f2d2f2c8d") center/cover fixed;
+display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:170px;
+background:rgba(237,224,176,0.95);
+border-right:2px solid var(--border);
+height:100vh;
+position:sticky;
+top:0;
+padding:10px;
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.sidebar button{
+padding:6px;
+background:var(--accent);
+color:white;
+border:none;
+cursor:pointer;
+width:100%;
+}
+
+.section{
+font-family:'Cinzel';
+color:var(--accent);
+margin-top:10px;
+font-size:13px;
+}
+
+/* MAIN */
+.main{
+flex:1;
+padding:15px;
+max-width:1100px;
+margin:auto;
+}
+
+.page{display:none;}
+.page.active{display:block;}
+
+.card{
+background:rgba(237,224,176,0.95);
+border:2px solid var(--border);
+padding:12px;
+margin-bottom:12px;
+}
+
+input,textarea,select{
+width:100%;
+margin-bottom:6px;
+padding:6px;
+border:1px solid var(--border);
+}
+
+.btn{
+background:var(--accent);
+color:white;
+border:none;
+padding:6px;
+cursor:pointer;
+margin:2px;
+}
+
+.item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:6px;
+border-bottom:1px dashed var(--border);
+}
+
+.pnj{
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.pnj img{
+width:50px;
+height:50px;
+object-fit:cover;
+border:1px solid var(--border);
+}
+
+/* LOGIN */
+#login{
+position:fixed;
+top:0;left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.85);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.login-box{
+background:white;
+padding:20px;
+border:3px solid var(--accent);
+text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- 🔐 LOGIN -->
+<div id="login">
+<div class="login-box">
+<h2>🔐 Accès MJ</h2>
+<input type="password" id="pass" placeholder="Mot de passe">
+<br>
+<button onclick="login()">Entrer</button>
+<p id="err" style="color:red;"></p>
+</div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+
+<div class="sidebar">
+
+<div class="section">📌 Menu</div>
+<button onclick="show('home')">🏠 Accueil</button>
+<button onclick="show('campaign')">⚔️ Campagne</button>
+<button onclick="show('scenario')">📖 Scénarios</button>
+<button onclick="show('players')">👥 Joueurs</button>
+<button onclick="show('rules')">📚 Règles MJ</button>
+<button onclick="show('map')">🗺️ Carte</button>
+
+<div class="section">🎲 Dés</div>
+<button onclick="roll(4)">D4</button>
+<button onclick="roll(6)">D6</button>
+<button onclick="roll(8)">D8</button>
+<button onclick="roll(10)">D10</button>
+<button onclick="roll(12)">D12</button>
+<button onclick="roll(20)">D20</button>
+<button onclick="roll(100)">D100</button>
+<button onclick="resetDice()">Reset</button>
+
+<div id="diceResult"></div>
+
+</div>
+
+<div class="main">
+
+<!-- HOME -->
+<div class="page active" id="home">
+<div class="card">
+<h2>🏠 Bienvenue MJ</h2>
+<p>Interface complète Naheulbeuk</p>
+</div>
+</div>
+
+<!-- CAMPAIGN -->
+<div class="page" id="campaign">
+
+<div class="card">
+<h3>📜 Quêtes</h3>
+<div id="questList"></div>
+
+<input id="qTitle">
+<textarea id="qDesc"></textarea>
+<button class="btn" onclick="addQuest()">Ajouter</button>
+</div>
+
+<div class="card">
+<h3>🧟 PNJ</h3>
+<div id="pnjList"></div>
+
+<input id="pnName">
+<textarea id="pnDesc"></textarea>
+<input id="pnImg">
+<button class="btn" onclick="addPNJ()">Ajouter PNJ</button>
+</div>
+
+</div>
+
+<!-- SCENARIO -->
+<div class="page" id="scenario">
+
+<div class="card">
+<h3>📖 Scénarios</h3>
+<div id="scenarioList"></div>
+
+<input id="sTitle">
+<textarea id="sDesc"></textarea>
+<button class="btn" onclick="addScenario()">Ajouter</button>
+</div>
+
+</div>
+
+<!-- PLAYERS -->
+<div class="page" id="players">
+
+<div class="card">
+<h3>👥 Joueurs</h3>
+
+<select id="playerSelect" onchange="loadPlayer()"></select>
+
+<input id="newPlayer">
+<button class="btn" onclick="addPlayer()">Créer</button>
+<button class="btn" onclick="deletePlayer()">Supprimer</button>
+
+</div>
+
+<div class="card">
+<h3>🧙 Fiche Naheulbeuk</h3>
+
+<input id="name" placeholder="Nom">
+<input id="race" placeholder="Race">
+<input id="class" placeholder="Classe">
+
+<input id="lvl" type="number" placeholder="Niveau">
+<input id="xp" type="number" placeholder="XP">
+
+<input id="fo" type="number" placeholder="Force">
+<input id="ad" type="number" placeholder="Adresse">
+<input id="in" type="number" placeholder="Intelligence">
+<input id="ch" type="number" placeholder="Charisme">
+
+<input id="pv" type="number" placeholder="PV">
+<input id="pm" type="number" placeholder="PM">
+<input id="or" type="number" placeholder="Or">
+
+<textarea id="notes" placeholder="Notes"></textarea>
+
+</div>
+
+</div>
+
+<!-- RULES -->
+<div class="page" id="rules">
+
+<div class="card">
+<h3>📚 Règles MJ</h3>
+
+<div id="rulesList"></div>
+
+<textarea id="ruleInput"></textarea>
+<button class="btn" onclick="addRule()">Ajouter règle</button>
+
+</div>
+
+</div>
+
+<!-- MAP -->
+<div class="page" id="map">
+
+<div class="card">
+<h3>🗺️ Carte</h3>
+
+<input type="file" id="mapUpload">
+<img id="mapImg" style="width:100%;margin-top:10px;">
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+const PASSWORD="naheulbeuk";
+
+/* LOGIN FIX */
+function login(){
+const pass=document.getElementById("pass").value;
+const err=document.getElementById("err");
+
+if(pass===PASSWORD){
+document.getElementById("login").style.display="none";
+document.getElementById("app").style.display="flex";
+}else{
+err.textContent="❌ Mauvais mot de passe";
+}
+}
+
+/* NAV */
+function show(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+/* DATA */
+let data={quests:[],pnj:[],scenarios:[],players:[],rules:[]};
+
+/* QUEST */
+function addQuest(){
+data.quests.push({title:qTitle.value,desc:qDesc.value});
+qTitle.value="";qDesc.value="";render();
+}
+function delQuest(i){data.quests.splice(i,1);render();}
+
+/* PNJ */
+function addPNJ(){
+data.pnj.push({
+name:pnName.value,
+desc:pnDesc.value,
+img:pnImg.value || "https://via.placeholder.com/50"
+});
+pnName.value="";pnDesc.value="";pnImg.value="";
+render();
+}
+function delPNJ(i){data.pnj.splice(i,1);render();}
+
+/* SCENARIO */
+function addScenario(){
+data.scenarios.push({title:sTitle.value,desc:sDesc.value});
+sTitle.value="";sDesc.value="";render();
+}
+function delScenario(i){data.scenarios.splice(i,1);render();}
+
+/* PLAYERS */
+function addPlayer(){
+data.players.push({name:newPlayer.value});
+newPlayer.value="";updatePlayers();
+}
+function deletePlayer(){
+data.players.splice(playerSelect.value,1);
+updatePlayers();
+}
+function updatePlayers(){
+playerSelect.innerHTML="";
+data.players.forEach((p,i)=>{
+let o=document.createElement("option");
+o.value=i;o.textContent=p.name;
+playerSelect.appendChild(o);
+});
+}
+function loadPlayer(){
+let p=data.players[playerSelect.value];
+if(!p) return;
+name.value=p.name;
+}
+
+/* RULES */
+function addRule(){
+data.rules.push(ruleInput.value);
+ruleInput.value="";render();
+}
+function delRule(i){data.rules.splice(i,1);render();}
+
+/* DICE */
+function roll(n){
+diceResult.innerHTML="🎲 "+(Math.floor(Math.random()*n)+1);
+}
+function resetDice(){diceResult.innerHTML="";}
+
+/* MAP */
+mapUpload.onchange=function(e){
+let r=new FileReader();
+r.onload=()=>mapImg.src=r.result;
+r.readAsDataURL(e.target.files[0]);
+};
+
+/* RENDER */
+function render(){
+
+questList.innerHTML=data.quests.map((q,i)=>
+`<div class="item"><div><b>${q.title}</b><br>${q.desc}</div><button onclick="delQuest(${i})">🗑️</button></div>`
+).join("");
+
+pnjList.innerHTML=data.pnj.map((p,i)=>
+`<div class="item pnj">
+<img src="${p.img}">
+<div><b>${p.name}</b><br>${p.desc}</div>
+<button onclick="delPNJ(${i})">🗑️</button>
+</div>`
+).join("");
+
+scenarioList.innerHTML=data.scenarios.map((s,i)=>
+`<div class="item"><div><b>${s.title}</b><br>${s.desc}</div><button onclick="delScenario(${i})">🗑️</button></div>`
+).join("");
+
+rulesList.innerHTML=data.rules.map((r,i)=>
+`<div class="item">${r}<button onclick="delRule(${i})">🗑️</button></div>`
+).join("");
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
