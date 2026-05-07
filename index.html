@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Taverne du MJ — Naheulbeuk</title>
+<title>La Taverne — Naheulbeuk</title>
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -150,16 +150,10 @@ body::before {
 .sidebar-logo h1 {
   font-family: 'UnifrakturMaguntia', serif;
   color: var(--gold2);
-  font-size: 22px;
-  line-height: 1.2;
+  font-size: 18px;
+  line-height: 1.3;
   text-shadow: 0 0 10px rgba(218,165,32,0.4);
-}
-
-.sidebar-logo p {
-  font-style: italic;
-  color: #a08060;
-  font-size: 11px;
-  margin-top: 4px;
+  word-break: break-word;
 }
 
 .sidebar-section {
@@ -536,7 +530,7 @@ textarea { resize: vertical; min-height: 70px; }
 <div id="login">
   <div class="login-box">
     <h1>La Taverne</h1>
-    <p>Accès réservé au Maître de Jeu</p>
+    <p>Accès réservé au MJ et Joueurs</p>
     <input type="password" id="passInput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()">
     <button class="login-btn" onclick="login()">⚔ Entrer dans la Taverne</button>
     <p id="loginErr"></p>
@@ -553,14 +547,18 @@ textarea { resize: vertical; min-height: 70px; }
   <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <h1>La Taverne</h1>
-      <p>Interface du Maître de Jeu</p>
+      <h1>La Taverne du Naheulbeuk</h1>
     </div>
 
     <div class="sidebar-section">Navigation</div>
     <button class="nav-btn active" onclick="show('home',this)"><span class="icon">🏠</span> Accueil</button>
-    <button class="nav-btn" onclick="show('campaign',this)"><span class="icon">⚔️</span> Campagne</button>
-    <button class="nav-btn" onclick="show('scenario',this)"><span class="icon">📖</span> Scénarios</button>
+    <button class="nav-btn" onclick="show('campaign1',this)"><span class="icon">⚔️</span> Campagne 1</button>
+    <button class="nav-btn" onclick="show('campaign2',this)"><span class="icon">⚔️</span> Campagne 2</button>
+    <button class="nav-btn" onclick="show('scenario1',this)"><span class="icon">📖</span> Scénario 1</button>
+    <button class="nav-btn" onclick="show('scenario2',this)"><span class="icon">📖</span> Scénario 2</button>
+    <button class="nav-btn" onclick="show('scenario3',this)"><span class="icon">📖</span> Scénario 3</button>
+    <button class="nav-btn" onclick="show('scenario4',this)"><span class="icon">📖</span> Scénario 4</button>
+    <button class="nav-btn" onclick="show('scenario5',this)"><span class="icon">📖</span> Scénario 5</button>
     <button class="nav-btn" onclick="show('players',this)"><span class="icon">👥</span> Joueurs</button>
     <button class="nav-btn" onclick="show('rules',this)"><span class="icon">📚</span> Règles MJ</button>
     <button class="nav-btn" onclick="show('map',this)"><span class="icon">🗺️</span> Carte</button>
@@ -588,17 +586,32 @@ textarea { resize: vertical; min-height: 70px; }
     <div class="page active" id="home">
       <div class="home-banner">
         <h1>La Taverne du Naheulbeuk</h1>
-        <p>Que votre campagne soit épique et vos dés favorables, ô Maître du Jeu</p>
+        <p>Que votre campagne soit épique et vos dés favorables, Attention aux poulets</p>
       </div>
       <div class="home-grid">
-        <div class="home-tile" onclick="show('campaign',null)">
+        <div class="home-tile" onclick="show('campaign1',null)">
           <span class="t-icon">⚔️</span>
-          <h3>Campagne</h3>
+          <h3>Campagne 1</h3>
           <p>Quêtes & PNJ</p>
         </div>
-        <div class="home-tile" onclick="show('scenario',null)">
+        <div class="home-tile" onclick="show('campaign2',null)">
+          <span class="t-icon">⚔️</span>
+          <h3>Campagne 2</h3>
+          <p>Quêtes & PNJ</p>
+        </div>
+        <div class="home-tile" onclick="show('scenario1',null)">
           <span class="t-icon">📖</span>
-          <h3>Scénarios</h3>
+          <h3>Scénario 1</h3>
+          <p>Vos aventures</p>
+        </div>
+        <div class="home-tile" onclick="show('scenario2',null)">
+          <span class="t-icon">📖</span>
+          <h3>Scénario 2</h3>
+          <p>Vos aventures</p>
+        </div>
+        <div class="home-tile" onclick="show('scenario3',null)">
+          <span class="t-icon">📖</span>
+          <h3>Scénario 3</h3>
           <p>Vos aventures</p>
         </div>
         <div class="home-tile" onclick="show('players',null)">
@@ -624,39 +637,101 @@ textarea { resize: vertical; min-height: 70px; }
       </div>
     </div>
 
-    <!-- CAMPAIGN -->
-    <div class="page" id="campaign">
-
+    <!-- CAMPAIGN 1 -->
+    <div class="page" id="campaign1">
       <div class="card">
-        <h3>📜 Quêtes actives</h3>
-        <div id="questList"><div class="empty">Aucune quête pour l'instant…</div></div>
+        <h3>📜 Quêtes — Campagne 1</h3>
+        <div id="questList1"><div class="empty">Aucune quête pour l'instant…</div></div>
         <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
-        <input id="qTitle" placeholder="Titre de la quête">
-        <textarea id="qDesc" placeholder="Description…"></textarea>
-        <button class="btn" onclick="addQuest()">+ Ajouter la quête</button>
+        <input id="qTitle1" placeholder="Titre de la quête">
+        <textarea id="qDesc1" placeholder="Description…"></textarea>
+        <button class="btn" onclick="addQuest(1)">+ Ajouter la quête</button>
       </div>
-
       <div class="card">
-        <h3>🧟 Personnages Non-Joueurs</h3>
-        <div id="pnjList"><div class="empty">Aucun PNJ enregistré…</div></div>
+        <h3>🧟 Personnages Non-Joueurs — Campagne 1</h3>
+        <div id="pnjList1"><div class="empty">Aucun PNJ enregistré…</div></div>
         <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
-        <input id="pnName" placeholder="Nom du PNJ">
-        <textarea id="pnDesc" placeholder="Description & notes…"></textarea>
-        <input id="pnImg" placeholder="URL d'une image (optionnel)">
-        <button class="btn" onclick="addPNJ()">+ Ajouter le PNJ</button>
+        <input id="pnName1" placeholder="Nom du PNJ">
+        <textarea id="pnDesc1" placeholder="Description & notes…"></textarea>
+        <input id="pnImg1" placeholder="URL d'une image (optionnel)">
+        <button class="btn" onclick="addPNJ(1)">+ Ajouter le PNJ</button>
       </div>
-
     </div>
 
-    <!-- SCENARIO -->
-    <div class="page" id="scenario">
+    <!-- CAMPAIGN 2 -->
+    <div class="page" id="campaign2">
       <div class="card">
-        <h3>📖 Scénarios</h3>
-        <div id="scenarioList"><div class="empty">Aucun scénario pour l'instant…</div></div>
+        <h3>📜 Quêtes — Campagne 2</h3>
+        <div id="questList2"><div class="empty">Aucune quête pour l'instant…</div></div>
         <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
-        <input id="sTitle" placeholder="Titre du scénario">
-        <textarea id="sDesc" placeholder="Résumé, notes, intrigue…"></textarea>
-        <button class="btn" onclick="addScenario()">+ Ajouter le scénario</button>
+        <input id="qTitle2" placeholder="Titre de la quête">
+        <textarea id="qDesc2" placeholder="Description…"></textarea>
+        <button class="btn" onclick="addQuest(2)">+ Ajouter la quête</button>
+      </div>
+      <div class="card">
+        <h3>🧟 Personnages Non-Joueurs — Campagne 2</h3>
+        <div id="pnjList2"><div class="empty">Aucun PNJ enregistré…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="pnName2" placeholder="Nom du PNJ">
+        <textarea id="pnDesc2" placeholder="Description & notes…"></textarea>
+        <input id="pnImg2" placeholder="URL d'une image (optionnel)">
+        <button class="btn" onclick="addPNJ(2)">+ Ajouter le PNJ</button>
+      </div>
+    </div>
+
+    <!-- SCENARIOS 1-5 -->
+    <div class="page" id="scenario1">
+      <div class="card">
+        <h3>📖 Scénario 1</h3>
+        <div id="scenarioList1"><div class="empty">Aucun scénario pour l'instant…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="sTitle1" placeholder="Titre du scénario">
+        <textarea id="sDesc1" placeholder="Résumé, notes, intrigue…"></textarea>
+        <button class="btn" onclick="addScenario(1)">+ Ajouter le scénario</button>
+      </div>
+    </div>
+
+    <div class="page" id="scenario2">
+      <div class="card">
+        <h3>📖 Scénario 2</h3>
+        <div id="scenarioList2"><div class="empty">Aucun scénario pour l'instant…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="sTitle2" placeholder="Titre du scénario">
+        <textarea id="sDesc2" placeholder="Résumé, notes, intrigue…"></textarea>
+        <button class="btn" onclick="addScenario(2)">+ Ajouter le scénario</button>
+      </div>
+    </div>
+
+    <div class="page" id="scenario3">
+      <div class="card">
+        <h3>📖 Scénario 3</h3>
+        <div id="scenarioList3"><div class="empty">Aucun scénario pour l'instant…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="sTitle3" placeholder="Titre du scénario">
+        <textarea id="sDesc3" placeholder="Résumé, notes, intrigue…"></textarea>
+        <button class="btn" onclick="addScenario(3)">+ Ajouter le scénario</button>
+      </div>
+    </div>
+
+    <div class="page" id="scenario4">
+      <div class="card">
+        <h3>📖 Scénario 4</h3>
+        <div id="scenarioList4"><div class="empty">Aucun scénario pour l'instant…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="sTitle4" placeholder="Titre du scénario">
+        <textarea id="sDesc4" placeholder="Résumé, notes, intrigue…"></textarea>
+        <button class="btn" onclick="addScenario(4)">+ Ajouter le scénario</button>
+      </div>
+    </div>
+
+    <div class="page" id="scenario5">
+      <div class="card">
+        <h3>📖 Scénario 5</h3>
+        <div id="scenarioList5"><div class="empty">Aucun scénario pour l'instant…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="sTitle5" placeholder="Titre du scénario">
+        <textarea id="sDesc5" placeholder="Résumé, notes, intrigue…"></textarea>
+        <button class="btn" onclick="addScenario(5)">+ Ajouter le scénario</button>
       </div>
     </div>
 
@@ -773,7 +848,13 @@ function toggleSidebar() {
 }
 
 // ── DATA ──
-let data = { quests: [], pnj: [], scenarios: [], players: [], rules: [] };
+let data = {
+  quests: {1:[], 2:[]},
+  pnj: {1:[], 2:[]},
+  scenarios: {1:[], 2:[], 3:[], 4:[], 5:[]},
+  players: [],
+  rules: []
+};
 
 function saveData() {
   try {
@@ -787,50 +868,58 @@ function saveData() {
 function loadData() {
   try {
     const s = localStorage.getItem('taverneData');
-    if (s) { data = JSON.parse(s); render(); updatePlayers(); }
+    if (s) {
+      const saved = JSON.parse(s);
+      // migrate old flat arrays if needed
+      if (Array.isArray(saved.quests)) saved.quests = {1: saved.quests, 2:[]};
+      if (Array.isArray(saved.pnj)) saved.pnj = {1: saved.pnj, 2:[]};
+      if (Array.isArray(saved.scenarios)) saved.scenarios = {1: saved.scenarios, 2:[], 3:[], 4:[], 5:[]};
+      data = saved;
+      render(); updatePlayers();
+    }
   } catch(e) {}
 }
 
 // ── QUESTS ──
-function addQuest() {
-  const t = document.getElementById('qTitle').value.trim();
+function addQuest(n) {
+  const t = document.getElementById('qTitle'+n).value.trim();
   if (!t) return;
-  data.quests.push({ title: t, desc: document.getElementById('qDesc').value });
-  document.getElementById('qTitle').value = '';
-  document.getElementById('qDesc').value = '';
+  data.quests[n].push({ title: t, desc: document.getElementById('qDesc'+n).value });
+  document.getElementById('qTitle'+n).value = '';
+  document.getElementById('qDesc'+n).value = '';
   render(); saveData();
 }
 
-function delQuest(i) { data.quests.splice(i, 1); render(); saveData(); }
+function delQuest(n, i) { data.quests[n].splice(i, 1); render(); saveData(); }
 
 // ── PNJ ──
-function addPNJ() {
-  const n = document.getElementById('pnName').value.trim();
-  if (!n) return;
-  data.pnj.push({
-    name: n,
-    desc: document.getElementById('pnDesc').value,
-    img: document.getElementById('pnImg').value || 'https://via.placeholder.com/56x56/7a5c2e/f2e8c9?text=PNJ'
+function addPNJ(n) {
+  const name = document.getElementById('pnName'+n).value.trim();
+  if (!name) return;
+  data.pnj[n].push({
+    name: name,
+    desc: document.getElementById('pnDesc'+n).value,
+    img: document.getElementById('pnImg'+n).value || 'https://via.placeholder.com/56x56/7a5c2e/f2e8c9?text=PNJ'
   });
-  document.getElementById('pnName').value = '';
-  document.getElementById('pnDesc').value = '';
-  document.getElementById('pnImg').value = '';
+  document.getElementById('pnName'+n).value = '';
+  document.getElementById('pnDesc'+n).value = '';
+  document.getElementById('pnImg'+n).value = '';
   render(); saveData();
 }
 
-function delPNJ(i) { data.pnj.splice(i, 1); render(); saveData(); }
+function delPNJ(n, i) { data.pnj[n].splice(i, 1); render(); saveData(); }
 
 // ── SCENARIOS ──
-function addScenario() {
-  const t = document.getElementById('sTitle').value.trim();
+function addScenario(n) {
+  const t = document.getElementById('sTitle'+n).value.trim();
   if (!t) return;
-  data.scenarios.push({ title: t, desc: document.getElementById('sDesc').value });
-  document.getElementById('sTitle').value = '';
-  document.getElementById('sDesc').value = '';
+  data.scenarios[n].push({ title: t, desc: document.getElementById('sDesc'+n).value });
+  document.getElementById('sTitle'+n).value = '';
+  document.getElementById('sDesc'+n).value = '';
   render(); saveData();
 }
 
-function delScenario(i) { data.scenarios.splice(i, 1); render(); saveData(); }
+function delScenario(n, i) { data.scenarios[n].splice(i, 1); render(); saveData(); }
 
 // ── PLAYERS ──
 function addPlayer() {
@@ -944,33 +1033,42 @@ document.getElementById('mapUpload').onchange = function(e) {
 
 // ── RENDER ──
 function render() {
-  const ql = document.getElementById('questList');
-  ql.innerHTML = data.quests.length === 0
-    ? '<div class="empty">Aucune quête pour l\'instant…</div>'
-    : data.quests.map((q, i) => `
-      <div class="item">
-        <div><div class="item-title">${q.title}</div><div class="item-desc">${q.desc}</div></div>
-        <button class="del-btn" onclick="delQuest(${i})">🗑</button>
-      </div>`).join('');
+  // campaigns
+  [1,2].forEach(n => {
+    const ql = document.getElementById('questList'+n);
+    if (!ql) return;
+    ql.innerHTML = (data.quests[n]||[]).length === 0
+      ? '<div class="empty">Aucune quête pour l\'instant…</div>'
+      : (data.quests[n]||[]).map((q, i) => `
+        <div class="item">
+          <div><div class="item-title">${q.title}</div><div class="item-desc">${q.desc}</div></div>
+          <button class="del-btn" onclick="delQuest(${n},${i})">🗑</button>
+        </div>`).join('');
 
-  const pl = document.getElementById('pnjList');
-  pl.innerHTML = data.pnj.length === 0
-    ? '<div class="empty">Aucun PNJ enregistré…</div>'
-    : data.pnj.map((p, i) => `
-      <div class="pnj-item">
-        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/56x56/7a5c2e/f2e8c9?text=PNJ'">
-        <div style="flex:1"><div class="item-title">${p.name}</div><div class="item-desc">${p.desc}</div></div>
-        <button class="del-btn" onclick="delPNJ(${i})">🗑</button>
-      </div>`).join('');
+    const pl = document.getElementById('pnjList'+n);
+    if (!pl) return;
+    pl.innerHTML = (data.pnj[n]||[]).length === 0
+      ? '<div class="empty">Aucun PNJ enregistré…</div>'
+      : (data.pnj[n]||[]).map((p, i) => `
+        <div class="pnj-item">
+          <img src="${p.img}" onerror="this.src='https://via.placeholder.com/56x56/7a5c2e/f2e8c9?text=PNJ'">
+          <div style="flex:1"><div class="item-title">${p.name}</div><div class="item-desc">${p.desc}</div></div>
+          <button class="del-btn" onclick="delPNJ(${n},${i})">🗑</button>
+        </div>`).join('');
+  });
 
-  const sl = document.getElementById('scenarioList');
-  sl.innerHTML = data.scenarios.length === 0
-    ? '<div class="empty">Aucun scénario pour l\'instant…</div>'
-    : data.scenarios.map((s, i) => `
-      <div class="item">
-        <div><div class="item-title">${s.title}</div><div class="item-desc">${s.desc}</div></div>
-        <button class="del-btn" onclick="delScenario(${i})">🗑</button>
-      </div>`).join('');
+  // scenarios
+  [1,2,3,4,5].forEach(n => {
+    const sl = document.getElementById('scenarioList'+n);
+    if (!sl) return;
+    sl.innerHTML = (data.scenarios[n]||[]).length === 0
+      ? '<div class="empty">Aucun scénario pour l\'instant…</div>'
+      : (data.scenarios[n]||[]).map((s, i) => `
+        <div class="item">
+          <div><div class="item-title">${s.title}</div><div class="item-desc">${s.desc}</div></div>
+          <button class="del-btn" onclick="delScenario(${n},${i})">🗑</button>
+        </div>`).join('');
+  });
 
   const rl = document.getElementById('rulesList');
   rl.innerHTML = data.rules.length === 0
