@@ -393,7 +393,7 @@ textarea { resize: vertical; min-height: 70px; }
 
 /* ── HOME ── */
 .home-banner {
-  background: linear-gradient(135deg, #2a1a08 0%, #1a0f05 100%);
+  background: url(https://wallpapercave.com/wp/wp7480681.jpg);
   border: 2px solid var(--gold);
   padding: 32px 36px;
   text-align: center;
@@ -737,6 +737,19 @@ textarea { resize: vertical; min-height: 70px; }
       <div class="card">
         <h3>🧙 Fiche Naheulbeuk</h3>
 
+        <!-- PORTRAIT -->
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;padding:12px;background:rgba(184,134,11,0.07);border:1px solid rgba(184,134,11,0.2);">
+          <div style="flex-shrink:0;">
+            <img id="pPortrait" src="" alt="Portrait" style="width:90px;height:90px;object-fit:cover;border:2px solid var(--border);display:none;">
+            <div id="pPortraitPlaceholder" style="width:90px;height:90px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;background:rgba(255,255,255,0.2);">🧙</div>
+          </div>
+          <div style="flex:1;">
+            <label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);display:block;margin-bottom:6px;">Portrait du personnage</label>
+            <input type="file" id="pPortraitUpload" accept="image/*" style="margin-bottom:6px;">
+            <button class="btn" style="background:transparent;color:var(--blood);border:1px solid var(--border);padding:4px 10px;font-size:13px;" onclick="removePortrait()">✕ Supprimer</button>
+          </div>
+        </div>
+
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
           <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">Nom</label><input id="pName" placeholder="Nom du héros"></div>
           <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">Race</label><input id="pRace" placeholder="Elfe, Nain…"></div>
@@ -957,6 +970,18 @@ function loadPlayer() {
   document.getElementById('pPm').value = p.pm || '';
   document.getElementById('pOr').value = p.or || '';
   document.getElementById('pNotes').value = p.notes || '';
+  // portrait
+  const portrait = document.getElementById('pPortrait');
+  const placeholder = document.getElementById('pPortraitPlaceholder');
+  if (p.img) {
+    portrait.src = p.img;
+    portrait.style.display = 'block';
+    placeholder.style.display = 'none';
+  } else {
+    portrait.style.display = 'none';
+    portrait.src = '';
+    placeholder.style.display = 'flex';
+  }
 }
 
 function savePlayer() {
@@ -975,7 +1000,9 @@ function savePlayer() {
     pv: document.getElementById('pPv').value,
     pm: document.getElementById('pPm').value,
     or: document.getElementById('pOr').value,
-    notes: document.getElementById('pNotes').value
+    notes: document.getElementById('pNotes').value,
+    img: document.getElementById('pPortrait').src && document.getElementById('pPortrait').style.display !== 'none'
+      ? document.getElementById('pPortrait').src : ''
   };
   updatePlayers();
   document.getElementById('playerSelect').value = i;
@@ -986,7 +1013,28 @@ function resetPlayerForm() {
   if (!confirm('Réinitialiser tous les champs de la fiche ? (ne supprime pas le personnage)')) return;
   ['pName','pRace','pClass','pNotes'].forEach(id => document.getElementById(id).value = '');
   ['pLvl','pXp','pFo','pAd','pIn','pCh','pPv','pPm','pOr'].forEach(id => document.getElementById(id).value = '0');
+  removePortrait();
 }
+
+function removePortrait() {
+  document.getElementById('pPortrait').style.display = 'none';
+  document.getElementById('pPortrait').src = '';
+  document.getElementById('pPortraitPlaceholder').style.display = 'flex';
+  document.getElementById('pPortraitUpload').value = '';
+}
+
+document.getElementById('pPortraitUpload').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = () => {
+    const portrait = document.getElementById('pPortrait');
+    portrait.src = r.result;
+    portrait.style.display = 'block';
+    document.getElementById('pPortraitPlaceholder').style.display = 'none';
+  };
+  r.readAsDataURL(file);
+});
 
 // ── RULES ──
 function addRule() {
