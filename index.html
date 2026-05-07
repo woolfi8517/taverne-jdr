@@ -1,417 +1,988 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MJ Naheulbeuk Pro Final</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Crimson+Text&display=swap" rel="stylesheet">
-
+<title>La Taverne du MJ — Naheulbeuk</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root{
---bg:#f5e6c8;
---card:#ede0b0;
---accent:#8b1a1a;
---border:#a0824a;
+:root {
+  --parch: #f2e8c9;
+  --parch2: #e8d9a8;
+  --ink: #2a1a08;
+  --ink2: #4a3218;
+  --blood: #8b1a1a;
+  --gold: #b8860b;
+  --gold2: #daa520;
+  --border: #7a5c2e;
+  --shadow: rgba(42,26,8,0.35);
+  --sidebar-w: 200px;
 }
 
-body{
-margin:0;
-font-family:'Crimson Text';
-background:url("https://images.unsplash.com/photo-1520975922284-9c1f2d2f2c8d") center/cover fixed;
-display:flex;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Crimson Pro', Georgia, serif;
+  background: #1a0f05;
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
 }
 
-/* SIDEBAR */
-.sidebar{
-width:170px;
-background:rgba(237,224,176,0.95);
-border-right:2px solid var(--border);
-height:100vh;
-position:sticky;
-top:0;
-padding:10px;
-display:flex;
-flex-direction:column;
-gap:6px;
+/* ── TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 6px);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.sidebar button{
-padding:6px;
-background:var(--accent);
-color:white;
-border:none;
-cursor:pointer;
-width:100%;
+/* ── LOGIN ── */
+#login {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,5,0,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
-.section{
-font-family:'Cinzel';
-color:var(--accent);
-margin-top:10px;
-font-size:13px;
+.login-box {
+  background: var(--parch);
+  border: 3px double var(--border);
+  padding: 40px 48px;
+  text-align: center;
+  position: relative;
+  max-width: 340px;
+  width: 90%;
+  box-shadow: 0 0 60px rgba(184,134,11,0.3), inset 0 0 30px rgba(0,0,0,0.05);
 }
 
-/* MAIN */
-.main{
-flex:1;
-padding:15px;
-max-width:1100px;
-margin:auto;
+.login-box::before, .login-box::after {
+  content: '✦';
+  position: absolute;
+  color: var(--gold);
+  font-size: 20px;
+}
+.login-box::before { top: 10px; left: 14px; }
+.login-box::after  { bottom: 10px; right: 14px; }
+
+.login-box h1 {
+  font-family: 'UnifrakturMaguntia', serif;
+  color: var(--blood);
+  font-size: 32px;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
 }
 
-.page{display:none;}
-.page.active{display:block;}
-
-.card{
-background:rgba(237,224,176,0.95);
-border:2px solid var(--border);
-padding:12px;
-margin-bottom:12px;
+.login-box p {
+  font-style: italic;
+  color: var(--ink2);
+  font-size: 15px;
+  margin-bottom: 24px;
 }
 
-input,textarea,select{
-width:100%;
-margin-bottom:6px;
-padding:6px;
-border:1px solid var(--border);
+.login-box input[type="password"] {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: 'Crimson Pro', serif;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.5);
+  color: var(--ink);
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: 4px;
 }
 
-.btn{
-background:var(--accent);
-color:white;
-border:none;
-padding:6px;
-cursor:pointer;
-margin:2px;
+.login-box input[type="password"]:focus { outline: 2px solid var(--gold); }
+
+.login-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--blood);
+  color: var(--parch);
+  font-family: 'Crimson Pro', serif;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+.login-btn:hover { background: #6a1010; }
+
+#loginErr { color: var(--blood); font-size: 14px; margin-top: 10px; min-height: 20px; }
+
+/* ── APP LAYOUT ── */
+#app {
+  display: none;
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
-.item{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:6px;
-border-bottom:1px dashed var(--border);
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: linear-gradient(180deg, #2a1a08 0%, #1a0f05 100%);
+  border-right: 2px solid var(--border);
+  height: 100vh;
+  position: fixed;
+  top: 0; left: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 100;
 }
 
-.pnj{
-display:flex;
-gap:10px;
-align-items:center;
+.sidebar-logo {
+  padding: 20px 16px 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
 }
 
-.pnj img{
-width:50px;
-height:50px;
-object-fit:cover;
-border:1px solid var(--border);
+.sidebar-logo h1 {
+  font-family: 'UnifrakturMaguntia', serif;
+  color: var(--gold2);
+  font-size: 22px;
+  line-height: 1.2;
+  text-shadow: 0 0 10px rgba(218,165,32,0.4);
 }
 
-/* LOGIN */
-#login{
-position:fixed;
-top:0;left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.85);
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:9999;
+.sidebar-logo p {
+  font-style: italic;
+  color: #a08060;
+  font-size: 11px;
+  margin-top: 4px;
 }
 
-.login-box{
-background:white;
-padding:20px;
-border:3px solid var(--accent);
-text-align:center;
+.sidebar-section {
+  padding: 14px 12px 4px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
 }
 
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: transparent;
+  color: #c8aa80;
+  border: none;
+  cursor: pointer;
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+}
+
+.nav-btn:hover { background: rgba(184,134,11,0.12); color: var(--gold2); border-left-color: var(--gold); }
+.nav-btn.active { background: rgba(139,26,26,0.2); color: var(--parch); border-left-color: var(--blood); }
+.nav-btn .icon { font-size: 16px; width: 18px; }
+
+/* DICE SECTION */
+.dice-section {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.dice-section p {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.dice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.dice-btn {
+  padding: 6px 4px;
+  background: rgba(184,134,11,0.15);
+  color: var(--gold2);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: 'Crimson Pro', serif;
+  font-size: 13px;
+  transition: all 0.15s;
+  font-weight: 600;
+}
+
+.dice-btn:hover { background: var(--blood); color: var(--parch); border-color: var(--blood); }
+
+#diceResult {
+  min-height: 36px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  color: var(--gold2);
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: 22px;
+  text-align: center;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dice-reset {
+  width: 100%;
+  padding: 5px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #806040;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Crimson Pro', serif;
+  margin-top: 4px;
+}
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 28px 32px;
+  background: #1a0f05;
+  min-height: 100vh;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--parch);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin-bottom: 18px;
+  box-shadow: 4px 4px 20px var(--shadow);
+  position: relative;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid rgba(184,134,11,0.15);
+  pointer-events: none;
+}
+
+.card h2, .card h3 {
+  font-family: 'UnifrakturMaguntia', serif;
+  color: var(--blood);
+  margin-bottom: 14px;
+  font-weight: 400;
+  font-size: 22px;
+  border-bottom: 1px solid var(--parch2);
+  padding-bottom: 8px;
+}
+
+.card h3 { font-size: 19px; }
+
+/* ── FORM ELEMENTS ── */
+input, textarea, select {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.5);
+  color: var(--ink);
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
+}
+
+input::placeholder, textarea::placeholder { color: #a08060; }
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--gold); }
+
+textarea { resize: vertical; min-height: 70px; }
+
+.btn {
+  padding: 8px 18px;
+  background: var(--blood);
+  color: var(--parch);
+  border: none;
+  cursor: pointer;
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: background 0.15s;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+.btn:hover { background: #6a1010; }
+.btn.secondary { background: var(--gold); color: var(--ink); }
+.btn.secondary:hover { background: var(--gold2); }
+
+/* ── ITEM LIST ── */
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-bottom: 1px dashed var(--border);
+  background: rgba(255,255,255,0.2);
+  margin-bottom: 4px;
+  gap: 12px;
+}
+
+.item:last-child { border-bottom: none; }
+.item-title { font-weight: 600; color: var(--blood); font-size: 16px; }
+.item-desc { font-size: 14px; color: var(--ink2); font-style: italic; }
+
+.del-btn {
+  padding: 3px 9px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--ink2);
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.del-btn:hover { background: var(--blood); color: white; border-color: var(--blood); }
+
+/* ── PNJ ── */
+.pnj-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 12px;
+  border-bottom: 1px dashed var(--border);
+  background: rgba(255,255,255,0.2);
+  margin-bottom: 4px;
+}
+
+.pnj-item img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ── PLAYER SHEET ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.stat-group label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink2);
+  margin-bottom: 3px;
+}
+
+/* ── HOME ── */
+.home-banner {
+  background: linear-gradient(135deg, #2a1a08 0%, #1a0f05 100%);
+  border: 2px solid var(--gold);
+  padding: 32px 36px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-banner::before {
+  content: '⚔';
+  position: absolute;
+  font-size: 120px;
+  color: rgba(184,134,11,0.05);
+  top: -20px;
+  right: -10px;
+}
+
+.home-banner h1 {
+  font-family: 'UnifrakturMaguntia', serif;
+  color: var(--gold2);
+  font-size: 42px;
+  text-shadow: 0 0 20px rgba(218,165,32,0.4);
+  margin-bottom: 8px;
+}
+
+.home-banner p {
+  color: #a08060;
+  font-style: italic;
+  font-size: 17px;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.home-tile {
+  background: var(--parch);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  padding: 18px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  text-align: center;
+}
+
+.home-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.home-tile .t-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+.home-tile h3 { font-family: 'UnifrakturMaguntia', serif; color: var(--blood); font-size: 18px; font-weight: 400; margin-bottom: 4px; }
+.home-tile p { font-size: 13px; color: var(--ink2); font-style: italic; }
+
+/* ── MAP ── */
+#mapImg { width: 100%; margin-top: 12px; border: 2px solid var(--border); display: none; }
+
+/* ── PLAYER SELECT ── */
+.player-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.player-header select { margin-bottom: 0; max-width: 200px; }
+.player-header input { margin-bottom: 0; max-width: 160px; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1a0f05; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { transform: translateX(-200px); transition: transform 0.3s; width: 200px; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 16px; }
+  .home-grid { grid-template-columns: 1fr 1fr; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .hamburger { display: flex; }
+}
+
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  background: var(--blood);
+  border: none;
+  color: var(--parch);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--ink2);
+  font-style: italic;
+  font-size: 15px;
+  opacity: 0.7;
+}
+
+/* ── SAVE BADGE ── */
+#saveBadge {
+  position: fixed;
+  bottom: 20px;
+  right: 24px;
+  background: var(--gold);
+  color: var(--ink);
+  padding: 8px 16px;
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 12px var(--shadow);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 500;
+  pointer-events: none;
+}
 </style>
 </head>
-
 <body>
 
-<!-- 🔐 LOGIN -->
+<!-- LOGIN -->
 <div id="login">
-<div class="login-box">
-<h2>🔐 Accès MJ</h2>
-<input type="password" id="pass" placeholder="Mot de passe">
-<br>
-<button onclick="login()">Entrer</button>
-<p id="err" style="color:red;"></p>
+  <div class="login-box">
+    <h1>La Taverne</h1>
+    <p>Accès réservé au Maître de Jeu</p>
+    <input type="password" id="passInput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()">
+    <button class="login-btn" onclick="login()">⚔ Entrer dans la Taverne</button>
+    <p id="loginErr"></p>
+  </div>
 </div>
-</div>
+
+<div id="saveBadge">✦ Sauvegardé</div>
+
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
 
 <!-- APP -->
-<div id="app" style="display:none;">
+<div id="app">
 
-<div class="sidebar">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <h1>La Taverne</h1>
+      <p>Interface du Maître de Jeu</p>
+    </div>
 
-<div class="section">📌 Menu</div>
-<button onclick="show('home')">🏠 Accueil</button>
-<button onclick="show('campaign')">⚔️ Campagne</button>
-<button onclick="show('scenario')">📖 Scénarios</button>
-<button onclick="show('players')">👥 Joueurs</button>
-<button onclick="show('rules')">📚 Règles MJ</button>
-<button onclick="show('map')">🗺️ Carte</button>
+    <div class="sidebar-section">Navigation</div>
+    <button class="nav-btn active" onclick="show('home',this)"><span class="icon">🏠</span> Accueil</button>
+    <button class="nav-btn" onclick="show('campaign',this)"><span class="icon">⚔️</span> Campagne</button>
+    <button class="nav-btn" onclick="show('scenario',this)"><span class="icon">📖</span> Scénarios</button>
+    <button class="nav-btn" onclick="show('players',this)"><span class="icon">👥</span> Joueurs</button>
+    <button class="nav-btn" onclick="show('rules',this)"><span class="icon">📚</span> Règles MJ</button>
+    <button class="nav-btn" onclick="show('map',this)"><span class="icon">🗺️</span> Carte</button>
 
-<div class="section">🎲 Dés</div>
-<button onclick="roll(4)">D4</button>
-<button onclick="roll(6)">D6</button>
-<button onclick="roll(8)">D8</button>
-<button onclick="roll(10)">D10</button>
-<button onclick="roll(12)">D12</button>
-<button onclick="roll(20)">D20</button>
-<button onclick="roll(100)">D100</button>
-<button onclick="resetDice()">Reset</button>
+    <div class="dice-section">
+      <p>🎲 Lancer les dés</p>
+      <div class="dice-grid">
+        <button class="dice-btn" onclick="roll(4)">D4</button>
+        <button class="dice-btn" onclick="roll(6)">D6</button>
+        <button class="dice-btn" onclick="roll(8)">D8</button>
+        <button class="dice-btn" onclick="roll(10)">D10</button>
+        <button class="dice-btn" onclick="roll(12)">D12</button>
+        <button class="dice-btn" onclick="roll(20)">D20</button>
+      </div>
+      <button class="dice-btn" style="width:100%;margin-bottom:6px;" onclick="roll(100)">D100</button>
+      <div id="diceResult">—</div>
+      <button class="dice-reset" onclick="resetDice()">Remettre à zéro</button>
+    </div>
+  </nav>
 
-<div id="diceResult"></div>
+  <!-- MAIN -->
+  <main class="main">
 
-</div>
+    <!-- HOME -->
+    <div class="page active" id="home">
+      <div class="home-banner">
+        <h1>La Taverne du Naheulbeuk</h1>
+        <p>Que votre campagne soit épique et vos dés favorables, ô Maître du Jeu</p>
+      </div>
+      <div class="home-grid">
+        <div class="home-tile" onclick="show('campaign',null)">
+          <span class="t-icon">⚔️</span>
+          <h3>Campagne</h3>
+          <p>Quêtes & PNJ</p>
+        </div>
+        <div class="home-tile" onclick="show('scenario',null)">
+          <span class="t-icon">📖</span>
+          <h3>Scénarios</h3>
+          <p>Vos aventures</p>
+        </div>
+        <div class="home-tile" onclick="show('players',null)">
+          <span class="t-icon">👥</span>
+          <h3>Joueurs</h3>
+          <p>Fiches de personnages</p>
+        </div>
+        <div class="home-tile" onclick="show('rules',null)">
+          <span class="t-icon">📚</span>
+          <h3>Règles MJ</h3>
+          <p>Notes de maîtrise</p>
+        </div>
+        <div class="home-tile" onclick="show('map',null)">
+          <span class="t-icon">🗺️</span>
+          <h3>Carte</h3>
+          <p>Le monde exploré</p>
+        </div>
+        <div class="home-tile" style="cursor:default;opacity:0.6;">
+          <span class="t-icon">🎲</span>
+          <h3>Dés</h3>
+          <p>Dans la sidebar</p>
+        </div>
+      </div>
+    </div>
 
-<div class="main">
+    <!-- CAMPAIGN -->
+    <div class="page" id="campaign">
 
-<!-- HOME -->
-<div class="page active" id="home">
-<div class="card">
-<h2>🏠 Bienvenue MJ</h2>
-<p>Interface complète Naheulbeuk</p>
-</div>
-</div>
+      <div class="card">
+        <h3>📜 Quêtes actives</h3>
+        <div id="questList"><div class="empty">Aucune quête pour l'instant…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="qTitle" placeholder="Titre de la quête">
+        <textarea id="qDesc" placeholder="Description…"></textarea>
+        <button class="btn" onclick="addQuest()">+ Ajouter la quête</button>
+      </div>
 
-<!-- CAMPAIGN -->
-<div class="page" id="campaign">
+      <div class="card">
+        <h3>🧟 Personnages Non-Joueurs</h3>
+        <div id="pnjList"><div class="empty">Aucun PNJ enregistré…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="pnName" placeholder="Nom du PNJ">
+        <textarea id="pnDesc" placeholder="Description & notes…"></textarea>
+        <input id="pnImg" placeholder="URL d'une image (optionnel)">
+        <button class="btn" onclick="addPNJ()">+ Ajouter le PNJ</button>
+      </div>
 
-<div class="card">
-<h3>📜 Quêtes</h3>
-<div id="questList"></div>
+    </div>
 
-<input id="qTitle">
-<textarea id="qDesc"></textarea>
-<button class="btn" onclick="addQuest()">Ajouter</button>
-</div>
+    <!-- SCENARIO -->
+    <div class="page" id="scenario">
+      <div class="card">
+        <h3>📖 Scénarios</h3>
+        <div id="scenarioList"><div class="empty">Aucun scénario pour l'instant…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <input id="sTitle" placeholder="Titre du scénario">
+        <textarea id="sDesc" placeholder="Résumé, notes, intrigue…"></textarea>
+        <button class="btn" onclick="addScenario()">+ Ajouter le scénario</button>
+      </div>
+    </div>
 
-<div class="card">
-<h3>🧟 PNJ</h3>
-<div id="pnjList"></div>
+    <!-- PLAYERS -->
+    <div class="page" id="players">
 
-<input id="pnName">
-<textarea id="pnDesc"></textarea>
-<input id="pnImg">
-<button class="btn" onclick="addPNJ()">Ajouter PNJ</button>
-</div>
+      <div class="card">
+        <h3>👥 Gestion des Joueurs</h3>
+        <div class="player-header">
+          <select id="playerSelect" onchange="loadPlayer()"></select>
+          <input id="newPlayer" placeholder="Nouveau personnage…">
+          <button class="btn" onclick="addPlayer()">Créer</button>
+          <button class="btn secondary" onclick="savePlayer()">Sauvegarder</button>
+          <button class="btn" style="background:transparent;color:var(--blood);border:1px solid var(--border);" onclick="deletePlayer()">Supprimer</button>
+        </div>
+      </div>
 
-</div>
+      <div class="card">
+        <h3>🧙 Fiche Naheulbeuk</h3>
 
-<!-- SCENARIO -->
-<div class="page" id="scenario">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+          <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">Nom</label><input id="pName" placeholder="Nom du héros"></div>
+          <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">Race</label><input id="pRace" placeholder="Elfe, Nain…"></div>
+          <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">Classe</label><input id="pClass" placeholder="Guerrier, Mage…"></div>
+        </div>
 
-<div class="card">
-<h3>📖 Scénarios</h3>
-<div id="scenarioList"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+          <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">Niveau</label><input id="pLvl" type="number" placeholder="1"></div>
+          <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">XP</label><input id="pXp" type="number" placeholder="0"></div>
+        </div>
 
-<input id="sTitle">
-<textarea id="sDesc"></textarea>
-<button class="btn" onclick="addScenario()">Ajouter</button>
-</div>
+        <div style="background:rgba(139,26,26,0.08);border:1px solid rgba(139,26,26,0.2);padding:12px;margin-bottom:12px;">
+          <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--blood);margin-bottom:8px;font-weight:600;">Caractéristiques</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div><label style="font-size:11px;color:var(--ink2);">Force</label><input id="pFo" type="number" placeholder="0"></div>
+            <div><label style="font-size:11px;color:var(--ink2);">Adresse</label><input id="pAd" type="number" placeholder="0"></div>
+            <div><label style="font-size:11px;color:var(--ink2);">Intelligence</label><input id="pIn" type="number" placeholder="0"></div>
+            <div><label style="font-size:11px;color:var(--ink2);">Charisme</label><input id="pCh" type="number" placeholder="0"></div>
+          </div>
+        </div>
 
-</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+          <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">PV</label><input id="pPv" type="number" placeholder="0"></div>
+          <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">PM</label><input id="pPm" type="number" placeholder="0"></div>
+          <div><label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">Or 🪙</label><input id="pOr" type="number" placeholder="0"></div>
+        </div>
 
-<!-- PLAYERS -->
-<div class="page" id="players">
+        <label style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink2);">Notes & Équipement</label>
+        <textarea id="pNotes" placeholder="Inventaire, historique, notes de jeu…" style="min-height:100px;"></textarea>
 
-<div class="card">
-<h3>👥 Joueurs</h3>
+        <button class="btn" onclick="savePlayer()">💾 Sauvegarder la fiche</button>
+      </div>
+    </div>
 
-<select id="playerSelect" onchange="loadPlayer()"></select>
+    <!-- RULES -->
+    <div class="page" id="rules">
+      <div class="card">
+        <h3>📚 Notes & Règles MJ</h3>
+        <div id="rulesList"><div class="empty">Aucune règle notée…</div></div>
+        <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0;">
+        <textarea id="ruleInput" placeholder="Ajoutez une règle, une note, un rappel…"></textarea>
+        <button class="btn" onclick="addRule()">+ Ajouter la note</button>
+      </div>
+    </div>
 
-<input id="newPlayer">
-<button class="btn" onclick="addPlayer()">Créer</button>
-<button class="btn" onclick="deletePlayer()">Supprimer</button>
+    <!-- MAP -->
+    <div class="page" id="map">
+      <div class="card">
+        <h3>🗺️ Carte du Monde</h3>
+        <p style="font-style:italic;color:var(--ink2);margin-bottom:12px;">Chargez l'image de votre carte pour l'afficher ici.</p>
+        <input type="file" id="mapUpload" accept="image/*">
+        <img id="mapImg">
+      </div>
+    </div>
 
-</div>
-
-<div class="card">
-<h3>🧙 Fiche Naheulbeuk</h3>
-
-<input id="name" placeholder="Nom">
-<input id="race" placeholder="Race">
-<input id="class" placeholder="Classe">
-
-<input id="lvl" type="number" placeholder="Niveau">
-<input id="xp" type="number" placeholder="XP">
-
-<input id="fo" type="number" placeholder="Force">
-<input id="ad" type="number" placeholder="Adresse">
-<input id="in" type="number" placeholder="Intelligence">
-<input id="ch" type="number" placeholder="Charisme">
-
-<input id="pv" type="number" placeholder="PV">
-<input id="pm" type="number" placeholder="PM">
-<input id="or" type="number" placeholder="Or">
-
-<textarea id="notes" placeholder="Notes"></textarea>
-
-</div>
-
-</div>
-
-<!-- RULES -->
-<div class="page" id="rules">
-
-<div class="card">
-<h3>📚 Règles MJ</h3>
-
-<div id="rulesList"></div>
-
-<textarea id="ruleInput"></textarea>
-<button class="btn" onclick="addRule()">Ajouter règle</button>
-
-</div>
-
-</div>
-
-<!-- MAP -->
-<div class="page" id="map">
-
-<div class="card">
-<h3>🗺️ Carte</h3>
-
-<input type="file" id="mapUpload">
-<img id="mapImg" style="width:100%;margin-top:10px;">
-
-</div>
-
-</div>
-
-</div>
+  </main>
 </div>
 
 <script>
+const PASSWORD = "naheulbeuk";
 
-const PASSWORD="naheulbeuk";
-
-/* LOGIN FIX */
-function login(){
-const pass=document.getElementById("pass").value;
-const err=document.getElementById("err");
-
-if(pass===PASSWORD){
-document.getElementById("login").style.display="none";
-document.getElementById("app").style.display="flex";
-}else{
-err.textContent="❌ Mauvais mot de passe";
-}
+// ── AUTH ──
+function login() {
+  const v = document.getElementById('passInput').value;
+  if (v === PASSWORD) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    loadData();
+  } else {
+    document.getElementById('loginErr').textContent = '✦ Mot de passe incorrect';
+  }
 }
 
-/* NAV */
-function show(id){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-}
-
-/* DATA */
-let data={quests:[],pnj:[],scenarios:[],players:[],rules:[]};
-
-/* QUEST */
-function addQuest(){
-data.quests.push({title:qTitle.value,desc:qDesc.value});
-qTitle.value="";qDesc.value="";render();
-}
-function delQuest(i){data.quests.splice(i,1);render();}
-
-/* PNJ */
-function addPNJ(){
-data.pnj.push({
-name:pnName.value,
-desc:pnDesc.value,
-img:pnImg.value || "https://via.placeholder.com/50"
+document.getElementById('passInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
 });
-pnName.value="";pnDesc.value="";pnImg.value="";
-render();
-}
-function delPNJ(i){data.pnj.splice(i,1);render();}
 
-/* SCENARIO */
-function addScenario(){
-data.scenarios.push({title:sTitle.value,desc:sDesc.value});
-sTitle.value="";sDesc.value="";render();
-}
-function delScenario(i){data.scenarios.splice(i,1);render();}
-
-/* PLAYERS */
-function addPlayer(){
-data.players.push({name:newPlayer.value});
-newPlayer.value="";updatePlayers();
-}
-function deletePlayer(){
-data.players.splice(playerSelect.value,1);
-updatePlayers();
-}
-function updatePlayers(){
-playerSelect.innerHTML="";
-data.players.forEach((p,i)=>{
-let o=document.createElement("option");
-o.value=i;o.textContent=p.name;
-playerSelect.appendChild(o);
-});
-}
-function loadPlayer(){
-let p=data.players[playerSelect.value];
-if(!p) return;
-name.value=p.name;
+// ── NAV ──
+function show(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active');
+    });
+  }
+  if (window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open');
 }
 
-/* RULES */
-function addRule(){
-data.rules.push(ruleInput.value);
-ruleInput.value="";render();
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
 }
-function delRule(i){data.rules.splice(i,1);render();}
 
-/* DICE */
-function roll(n){
-diceResult.innerHTML="🎲 "+(Math.floor(Math.random()*n)+1);
+// ── DATA ──
+let data = { quests: [], pnj: [], scenarios: [], players: [], rules: [] };
+
+function saveData() {
+  try {
+    localStorage.setItem('taverneData', JSON.stringify(data));
+    const badge = document.getElementById('saveBadge');
+    badge.style.opacity = '1';
+    setTimeout(() => badge.style.opacity = '0', 1500);
+  } catch(e) {}
 }
-function resetDice(){diceResult.innerHTML="";}
 
-/* MAP */
-mapUpload.onchange=function(e){
-let r=new FileReader();
-r.onload=()=>mapImg.src=r.result;
-r.readAsDataURL(e.target.files[0]);
+function loadData() {
+  try {
+    const s = localStorage.getItem('taverneData');
+    if (s) { data = JSON.parse(s); render(); updatePlayers(); }
+  } catch(e) {}
+}
+
+// ── QUESTS ──
+function addQuest() {
+  const t = document.getElementById('qTitle').value.trim();
+  if (!t) return;
+  data.quests.push({ title: t, desc: document.getElementById('qDesc').value });
+  document.getElementById('qTitle').value = '';
+  document.getElementById('qDesc').value = '';
+  render(); saveData();
+}
+
+function delQuest(i) { data.quests.splice(i, 1); render(); saveData(); }
+
+// ── PNJ ──
+function addPNJ() {
+  const n = document.getElementById('pnName').value.trim();
+  if (!n) return;
+  data.pnj.push({
+    name: n,
+    desc: document.getElementById('pnDesc').value,
+    img: document.getElementById('pnImg').value || 'https://via.placeholder.com/56x56/7a5c2e/f2e8c9?text=PNJ'
+  });
+  document.getElementById('pnName').value = '';
+  document.getElementById('pnDesc').value = '';
+  document.getElementById('pnImg').value = '';
+  render(); saveData();
+}
+
+function delPNJ(i) { data.pnj.splice(i, 1); render(); saveData(); }
+
+// ── SCENARIOS ──
+function addScenario() {
+  const t = document.getElementById('sTitle').value.trim();
+  if (!t) return;
+  data.scenarios.push({ title: t, desc: document.getElementById('sDesc').value });
+  document.getElementById('sTitle').value = '';
+  document.getElementById('sDesc').value = '';
+  render(); saveData();
+}
+
+function delScenario(i) { data.scenarios.splice(i, 1); render(); saveData(); }
+
+// ── PLAYERS ──
+function addPlayer() {
+  const n = document.getElementById('newPlayer').value.trim();
+  if (!n) return;
+  data.players.push({ name: n, race: '', cls: '', lvl: 1, xp: 0, fo: 0, ad: 0, inn: 0, ch: 0, pv: 0, pm: 0, or: 0, notes: '' });
+  document.getElementById('newPlayer').value = '';
+  updatePlayers();
+  document.getElementById('playerSelect').value = data.players.length - 1;
+  loadPlayer();
+  saveData();
+}
+
+function deletePlayer() {
+  const i = parseInt(document.getElementById('playerSelect').value);
+  if (isNaN(i) || !data.players[i]) return;
+  if (confirm('Supprimer ' + data.players[i].name + ' ?')) {
+    data.players.splice(i, 1);
+    updatePlayers();
+    saveData();
+  }
+}
+
+function updatePlayers() {
+  const sel = document.getElementById('playerSelect');
+  sel.innerHTML = data.players.length === 0 ? '<option value="">— Aucun joueur —</option>' : '';
+  data.players.forEach((p, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = p.name;
+    sel.appendChild(o);
+  });
+  if (data.players.length > 0) loadPlayer();
+}
+
+function loadPlayer() {
+  const i = parseInt(document.getElementById('playerSelect').value);
+  if (isNaN(i) || !data.players[i]) return;
+  const p = data.players[i];
+  document.getElementById('pName').value = p.name || '';
+  document.getElementById('pRace').value = p.race || '';
+  document.getElementById('pClass').value = p.cls || '';
+  document.getElementById('pLvl').value = p.lvl || '';
+  document.getElementById('pXp').value = p.xp || '';
+  document.getElementById('pFo').value = p.fo || '';
+  document.getElementById('pAd').value = p.ad || '';
+  document.getElementById('pIn').value = p.inn || '';
+  document.getElementById('pCh').value = p.ch || '';
+  document.getElementById('pPv').value = p.pv || '';
+  document.getElementById('pPm').value = p.pm || '';
+  document.getElementById('pOr').value = p.or || '';
+  document.getElementById('pNotes').value = p.notes || '';
+}
+
+function savePlayer() {
+  const i = parseInt(document.getElementById('playerSelect').value);
+  if (isNaN(i) || !data.players[i]) return;
+  data.players[i] = {
+    name: document.getElementById('pName').value,
+    race: document.getElementById('pRace').value,
+    cls: document.getElementById('pClass').value,
+    lvl: document.getElementById('pLvl').value,
+    xp: document.getElementById('pXp').value,
+    fo: document.getElementById('pFo').value,
+    ad: document.getElementById('pAd').value,
+    inn: document.getElementById('pIn').value,
+    ch: document.getElementById('pCh').value,
+    pv: document.getElementById('pPv').value,
+    pm: document.getElementById('pPm').value,
+    or: document.getElementById('pOr').value,
+    notes: document.getElementById('pNotes').value
+  };
+  updatePlayers();
+  document.getElementById('playerSelect').value = i;
+  saveData();
+}
+
+// ── RULES ──
+function addRule() {
+  const r = document.getElementById('ruleInput').value.trim();
+  if (!r) return;
+  data.rules.push(r);
+  document.getElementById('ruleInput').value = '';
+  render(); saveData();
+}
+
+function delRule(i) { data.rules.splice(i, 1); render(); saveData(); }
+
+// ── DICE ──
+function roll(n) {
+  const r = Math.floor(Math.random() * n) + 1;
+  const el = document.getElementById('diceResult');
+  el.textContent = r;
+  el.style.color = r === n ? '#daa520' : r === 1 ? '#8b1a1a' : '#c8aa80';
+}
+
+function resetDice() {
+  document.getElementById('diceResult').textContent = '—';
+  document.getElementById('diceResult').style.color = '';
+}
+
+// ── MAP ──
+document.getElementById('mapUpload').onchange = function(e) {
+  const r = new FileReader();
+  r.onload = () => {
+    const img = document.getElementById('mapImg');
+    img.src = r.result;
+    img.style.display = 'block';
+  };
+  r.readAsDataURL(e.target.files[0]);
 };
 
-/* RENDER */
-function render(){
+// ── RENDER ──
+function render() {
+  const ql = document.getElementById('questList');
+  ql.innerHTML = data.quests.length === 0
+    ? '<div class="empty">Aucune quête pour l\'instant…</div>'
+    : data.quests.map((q, i) => `
+      <div class="item">
+        <div><div class="item-title">${q.title}</div><div class="item-desc">${q.desc}</div></div>
+        <button class="del-btn" onclick="delQuest(${i})">🗑</button>
+      </div>`).join('');
 
-questList.innerHTML=data.quests.map((q,i)=>
-`<div class="item"><div><b>${q.title}</b><br>${q.desc}</div><button onclick="delQuest(${i})">🗑️</button></div>`
-).join("");
+  const pl = document.getElementById('pnjList');
+  pl.innerHTML = data.pnj.length === 0
+    ? '<div class="empty">Aucun PNJ enregistré…</div>'
+    : data.pnj.map((p, i) => `
+      <div class="pnj-item">
+        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/56x56/7a5c2e/f2e8c9?text=PNJ'">
+        <div style="flex:1"><div class="item-title">${p.name}</div><div class="item-desc">${p.desc}</div></div>
+        <button class="del-btn" onclick="delPNJ(${i})">🗑</button>
+      </div>`).join('');
 
-pnjList.innerHTML=data.pnj.map((p,i)=>
-`<div class="item pnj">
-<img src="${p.img}">
-<div><b>${p.name}</b><br>${p.desc}</div>
-<button onclick="delPNJ(${i})">🗑️</button>
-</div>`
-).join("");
+  const sl = document.getElementById('scenarioList');
+  sl.innerHTML = data.scenarios.length === 0
+    ? '<div class="empty">Aucun scénario pour l\'instant…</div>'
+    : data.scenarios.map((s, i) => `
+      <div class="item">
+        <div><div class="item-title">${s.title}</div><div class="item-desc">${s.desc}</div></div>
+        <button class="del-btn" onclick="delScenario(${i})">🗑</button>
+      </div>`).join('');
 
-scenarioList.innerHTML=data.scenarios.map((s,i)=>
-`<div class="item"><div><b>${s.title}</b><br>${s.desc}</div><button onclick="delScenario(${i})">🗑️</button></div>`
-).join("");
-
-rulesList.innerHTML=data.rules.map((r,i)=>
-`<div class="item">${r}<button onclick="delRule(${i})">🗑️</button></div>`
-).join("");
-
+  const rl = document.getElementById('rulesList');
+  rl.innerHTML = data.rules.length === 0
+    ? '<div class="empty">Aucune règle notée…</div>'
+    : data.rules.map((r, i) => `
+      <div class="item">
+        <div class="item-desc" style="font-size:15px;font-style:normal;">${r}</div>
+        <button class="del-btn" onclick="delRule(${i})">🗑</button>
+      </div>`).join('');
 }
 
 render();
-
 </script>
-
 </body>
 </html>
