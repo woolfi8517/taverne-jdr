@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Taverne — Naheulbeuk</title>
+<title>La Taverne du MJ — Naheulbeuk</title>
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -23,7 +23,7 @@
 
 body {
   font-family: 'Crimson Pro', Georgia, serif;
-  background: #1a0f05;
+  background: url(https://wallpapercave.com/wp/wp7480681.jpg);
   color: var(--ink);
   min-height: 100vh;
   display: flex;
@@ -529,8 +529,8 @@ textarea { resize: vertical; min-height: 70px; }
 <!-- LOGIN -->
 <div id="login">
   <div class="login-box">
-    <h1>La Taverne</h1>
-    <p>Accès réservé au MJ et Joueurs</p>
+    <h1>La Taverne de Naheulbeuk</h1>
+    <p>Accès réservé au Maître de Jeu</p>
     <input type="password" id="passInput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()">
     <button class="login-btn" onclick="login()">⚔ Entrer dans la Taverne</button>
     <p id="loginErr"></p>
@@ -547,7 +547,7 @@ textarea { resize: vertical; min-height: 70px; }
   <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <h1>La Taverne du Naheulbeuk</h1>
+      <h1>La Taverne de Naheulbeuk</h1>
     </div>
 
     <div class="sidebar-section">Navigation</div>
@@ -585,8 +585,8 @@ textarea { resize: vertical; min-height: 70px; }
     <!-- HOME -->
     <div class="page active" id="home">
       <div class="home-banner">
-        <h1>La Taverne du Naheulbeuk</h1>
-        <p>Que votre campagne soit épique et vos dés favorables, Attention aux poulets</p>
+        <h1>La Taverne de Naheulbeuk</h1>
+        <p>Que votre campagne soit épique et vos dés favorables, ô Maître du Jeu</p>
       </div>
       <div class="home-grid">
         <div class="home-tile" onclick="show('campaign1',null)">
@@ -598,21 +598,6 @@ textarea { resize: vertical; min-height: 70px; }
           <span class="t-icon">⚔️</span>
           <h3>Campagne 2</h3>
           <p>Quêtes & PNJ</p>
-        </div>
-        <div class="home-tile" onclick="show('scenario1',null)">
-          <span class="t-icon">📖</span>
-          <h3>Scénario 1</h3>
-          <p>Vos aventures</p>
-        </div>
-        <div class="home-tile" onclick="show('scenario2',null)">
-          <span class="t-icon">📖</span>
-          <h3>Scénario 2</h3>
-          <p>Vos aventures</p>
-        </div>
-        <div class="home-tile" onclick="show('scenario3',null)">
-          <span class="t-icon">📖</span>
-          <h3>Scénario 3</h3>
-          <p>Vos aventures</p>
         </div>
         <div class="home-tile" onclick="show('players',null)">
           <span class="t-icon">👥</span>
@@ -783,6 +768,7 @@ textarea { resize: vertical; min-height: 70px; }
         <textarea id="pNotes" placeholder="Inventaire, historique, notes de jeu…" style="min-height:100px;"></textarea>
 
         <button class="btn" onclick="savePlayer()">💾 Sauvegarder la fiche</button>
+        <button class="btn" style="background:transparent;color:var(--blood);border:1px solid var(--border);" onclick="resetPlayerForm()">🔄 Réinitialiser la fiche</button>
       </div>
     </div>
 
@@ -994,6 +980,12 @@ function savePlayer() {
   updatePlayers();
   document.getElementById('playerSelect').value = i;
   saveData();
+}
+
+function resetPlayerForm() {
+  if (!confirm('Réinitialiser tous les champs de la fiche ? (ne supprime pas le personnage)')) return;
+  ['pName','pRace','pClass','pNotes'].forEach(id => document.getElementById(id).value = '');
+  ['pLvl','pXp','pFo','pAd','pIn','pCh','pPv','pPm','pOr'].forEach(id => document.getElementById(id).value = '0');
 }
 
 // ── RULES ──
