@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>La Taverne du MJ — Naheulbeuk</title>
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root {
   --parch: #f2e8c9;
@@ -1047,10 +1048,41 @@ function afficherQR(token) {
   const tokens = getTokens();
   document.getElementById('qrPreview').style.display = 'block';
   document.getElementById('qrUrl').textContent = url;
-  if (typeof QRCode !== 'undefined') {
-    const canvas = document.getElementById('adminQR');
-    QRCode.toCanvas(canvas, url, { width: 180, margin: 1, color: { dark:'#2a1a08', light:'#ffffff' }}, ()=>{});
-  }
+
+  const canvas = document.getElementById('adminQR');
+  // Vide le canvas précédent
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Crée un nouveau QR dans un div temporaire
+  const tmp = document.createElement('div');
+  new QRCode(tmp, {
+    text: url,
+    width: 180,
+    height: 180,
+    colorDark: '#2a1a08',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  // Copie l'image générée sur notre canvas
+  setTimeout(() => {
+    const img = tmp.querySelector('img');
+    if (img) {
+      canvas.width = 180;
+      canvas.height = 180;
+      const c = canvas.getContext('2d');
+      img.onload = () => c.drawImage(img, 0, 0, 180, 180);
+      if (img.complete) c.drawImage(img, 0, 0, 180, 180);
+    } else {
+      const qrCanvas = tmp.querySelector('canvas');
+      if (qrCanvas) {
+        canvas.width = 180;
+        canvas.height = 180;
+        canvas.getContext('2d').drawImage(qrCanvas, 0, 0, 180, 180);
+      }
+    }
+  }, 100);
 }
 
 function renderTokenList() {
@@ -1073,11 +1105,6 @@ function renderTokenList() {
 
 // ── INIT ──
 (function init() {
-  // Charge QRCode lib
-  const s = document.createElement('script');
-  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-  document.head.appendChild(s);
-  // Vérifie token URL
   checkUrlToken();
 })();
 
