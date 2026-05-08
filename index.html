@@ -647,6 +647,12 @@ textarea { resize: vertical; min-height: 70px; }
     <button class="nav-btn" onclick="show('rules',this)"><span class="icon">📚</span> Règles MJ</button>
     <button class="nav-btn" onclick="show('map',this)"><span class="icon">🗺️</span> Carte</button>
 
+    <div style="padding:10px 12px;border-top:1px solid var(--border);margin-top:auto;">
+      <button onclick="openAdminFromApp()" style="width:100%;padding:8px;background:rgba(184,134,11,0.15);color:var(--gold2);border:1px solid var(--border);cursor:pointer;font-family:'Crimson Pro',serif;font-size:13px;text-align:left;display:flex;align-items:center;gap:6px;">
+        <span>🔑</span> Gérer les accès
+      </button>
+    </div>
+
     <div class="dice-section">
       <p>🎲 Lancer les dés</p>
       <div class="dice-grid">
@@ -991,6 +997,15 @@ function resetAdminKey() {
 function openAdmin() {
   document.getElementById('adminPanel').classList.add('open');
   detectAdminState();
+}
+
+function openAdminFromApp() {
+  // Déjà connecté en tant que MJ → ouvre directement la gestion des tokens
+  document.getElementById('adminPanel').classList.add('open');
+  document.getElementById('adminSetup').style.display   = 'none';
+  document.getElementById('adminAuth').style.display    = 'none';
+  document.getElementById('adminContent').style.display = 'block';
+  renderTokenList();
 }
 
 function closeAdmin() {
