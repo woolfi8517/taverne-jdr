@@ -45,29 +45,27 @@ body::before {
 #login {
   position: fixed;
   inset: 0;
-  background: rgba(10,5,0,0.92);
+  background: rgba(10,5,0,0.96);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  flex-direction: column;
 }
 
 .login-box {
   background: var(--parch);
   border: 3px double var(--border);
-  padding: 40px 48px;
+  padding: 32px 40px;
   text-align: center;
   position: relative;
-  max-width: 340px;
+  max-width: 360px;
   width: 90%;
   box-shadow: 0 0 60px rgba(184,134,11,0.3), inset 0 0 30px rgba(0,0,0,0.05);
 }
 
 .login-box::before, .login-box::after {
-  content: '✦';
-  position: absolute;
-  color: var(--gold);
-  font-size: 20px;
+  content: '✦'; position: absolute; color: var(--gold); font-size: 20px;
 }
 .login-box::before { top: 10px; left: 14px; }
 .login-box::after  { bottom: 10px; right: 14px; }
@@ -75,49 +73,79 @@ body::before {
 .login-box h1 {
   font-family: 'UnifrakturMaguntia', serif;
   color: var(--blood);
-  font-size: 32px;
-  margin-bottom: 6px;
+  font-size: 26px;
+  margin-bottom: 4px;
   letter-spacing: 1px;
 }
 
-.login-box p {
+.login-box .sub {
   font-style: italic;
   color: var(--ink2);
-  font-size: 15px;
-  margin-bottom: 24px;
+  font-size: 14px;
+  margin-bottom: 18px;
 }
 
-.login-box input[type="password"] {
-  width: 100%;
-  padding: 10px 14px;
-  font-family: 'Crimson Pro', serif;
-  font-size: 16px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.5);
-  color: var(--ink);
-  margin-bottom: 12px;
-  text-align: center;
-  letter-spacing: 4px;
-}
+#loginErr { color: var(--blood); font-size: 14px; margin-top: 10px; min-height: 18px; }
 
-.login-box input[type="password"]:focus { outline: 2px solid var(--gold); }
-
-.login-btn {
-  width: 100%;
-  padding: 10px;
-  background: var(--blood);
-  color: var(--parch);
-  font-family: 'Crimson Pro', serif;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
+.login-mj-link {
+  display: block;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--border);
   cursor: pointer;
-  letter-spacing: 1px;
-  transition: background 0.2s;
+  font-style: italic;
+  opacity: 0.6;
 }
-.login-btn:hover { background: #6a1010; }
+.login-mj-link:hover { color: var(--gold); opacity: 1; }
 
-#loginErr { color: var(--blood); font-size: 14px; margin-top: 10px; min-height: 20px; }
+/* ── ADMIN PANEL ── */
+#adminPanel {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,5,0,0.97);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+#adminPanel.open { display: flex; }
+
+.admin-box {
+  background: var(--parch);
+  border: 3px double var(--border);
+  padding: 28px 32px;
+  max-width: 460px;
+  width: 94%;
+  box-shadow: 0 0 60px rgba(184,134,11,0.3);
+}
+
+.admin-box h2 {
+  font-family: 'UnifrakturMaguntia', serif;
+  color: var(--blood);
+  font-size: 22px;
+  margin-bottom: 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+}
+
+.token-list { margin: 10px 0; max-height: 200px; overflow-y: auto; }
+
+.token-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px;
+  border-bottom: 1px dashed var(--border);
+  font-size: 13px;
+}
+.token-name { font-weight: 600; color: var(--ink); flex: 1; }
+.tok-active  { color: #2a7a2a; font-size: 11px; font-style: italic; }
+.tok-dead    { color: var(--blood); font-size: 11px; font-style: italic; }
+
+.qr-preview { text-align: center; margin: 14px 0; }
+.qr-preview canvas { border: 2px solid var(--border); padding: 8px; background: white; }
+.qr-url { font-size: 10px; color: var(--ink2); word-break: break-all; margin-top: 6px; font-style: italic; }
 
 /* ── APP LAYOUT ── */
 #app {
@@ -530,10 +558,66 @@ textarea { resize: vertical; min-height: 70px; }
 <div id="login">
   <div class="login-box">
     <h1>La Taverne de Naheulbeuk</h1>
-    <p>Accès réservé au Maître de Jeu</p>
-    <input type="password" id="passInput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()">
-    <button class="login-btn" onclick="login()">⚔ Entrer dans la Taverne</button>
+    <p class="sub">Accès par invitation uniquement</p>
+
+    <div style="font-size:36px;margin-bottom:10px;">🔒</div>
+    <p style="font-size:14px;color:var(--ink2);font-style:italic;">Vous devez être invité par le Maître de Jeu.<br>Scannez votre QR code personnel.</p>
+
     <p id="loginErr"></p>
+    <span class="login-mj-link" onclick="openAdmin()">⚙ Panneau Maître de Jeu</span>
+  </div>
+</div>
+
+<!-- ADMIN PANEL — zéro mot de passe dans le code -->
+<div id="adminPanel">
+  <div class="admin-box">
+    <h2>⚙ Panneau Maître de Jeu</h2>
+
+    <!-- STEP 1 : clé secrète MJ saisie UNE SEULE FOIS et stockée localement -->
+    <div id="adminSetup" style="display:none;">
+      <p style="font-size:13px;color:var(--ink2);font-style:italic;margin-bottom:10px;">
+        Première connexion : choisissez votre clé secrète MJ.<br>
+        <strong>Elle ne sera jamais stockée dans le code.</strong>
+      </p>
+      <input type="password" id="setupKey1" placeholder="Votre clé secrète…" style="width:100%;padding:8px;border:1px solid var(--border);font-size:14px;margin-bottom:6px;">
+      <input type="password" id="setupKey2" placeholder="Confirmez la clé…" style="width:100%;padding:8px;border:1px solid var(--border);font-size:14px;margin-bottom:8px;">
+      <button class="btn" style="width:100%;" onclick="setupAdminKey()">🔑 Définir ma clé</button>
+      <p id="setupErr" style="color:var(--blood);font-size:13px;margin-top:6px;min-height:16px;"></p>
+    </div>
+
+    <!-- STEP 2 : saisie clé pour se connecter -->
+    <div id="adminAuth" style="display:none;">
+      <p style="font-size:13px;color:var(--ink2);font-style:italic;margin-bottom:10px;">Entrez votre clé secrète MJ :</p>
+      <input type="password" id="adminKey" placeholder="Clé secrète…" style="width:100%;padding:8px;border:1px solid var(--border);font-size:14px;margin-bottom:8px;" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button class="btn" style="width:100%;" onclick="adminLogin()">🔓 Entrer</button>
+      <button class="btn" style="width:100%;margin-top:6px;background:transparent;border:1px solid var(--border);color:var(--ink2);" onclick="closeAdmin()">Annuler</button>
+      <p id="adminErr" style="color:var(--blood);font-size:13px;margin-top:6px;min-height:16px;"></p>
+      <span style="font-size:11px;color:var(--border);cursor:pointer;display:block;margin-top:8px;font-style:italic;" onclick="resetAdminKey()">Réinitialiser la clé (si perdue)</span>
+    </div>
+
+    <!-- STEP 3 : gestion des tokens -->
+    <div id="adminContent" style="display:none;">
+      <p style="font-size:13px;color:var(--ink2);font-style:italic;margin-bottom:10px;">Créez un accès QR par joueur :</p>
+
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <input id="newTokenName" placeholder="Nom du joueur…" style="flex:1;padding:7px;border:1px solid var(--border);font-family:'Crimson Pro',serif;font-size:14px;">
+        <button class="btn" onclick="creerToken()" style="margin:0;white-space:nowrap;">+ Créer</button>
+      </div>
+
+      <div class="token-list" id="tokenList"></div>
+
+      <div class="qr-preview" id="qrPreview" style="display:none;">
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:8px;font-weight:600;">📱 QR code à montrer au joueur :</p>
+        <canvas id="adminQR"></canvas>
+        <p class="qr-url" id="qrUrl"></p>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-top:14px;">
+        <button class="btn" style="flex:1;" onclick="closeAdmin()">✓ Fermer</button>
+        <button class="btn" style="background:transparent;border:1px solid var(--border);color:var(--ink2);font-size:13px;" onclick="adminLogout()">Déconnexion</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -810,23 +894,177 @@ textarea { resize: vertical; min-height: 70px; }
 </div>
 
 <script>
-const PASSWORD = "naheulbeuk";
+// ════════════════════════════════════════
+// SYSTÈME D'ACCÈS — ZÉRO MOT DE PASSE DANS LE CODE
+// La clé MJ est choisie par le MJ et stockée
+// uniquement dans son localStorage, hashée.
+// Les tokens joueurs sont aussi dans localStorage.
+// ════════════════════════════════════════
 
-// ── AUTH ──
-function login() {
-  const v = document.getElementById('passInput').value;
-  if (v === PASSWORD) {
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    loadData();
+// ── HASH simple (SHA-256 via WebCrypto) ──
+async function hash(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── TOKENS ──
+function getTokens() {
+  try { return JSON.parse(localStorage.getItem('taverneTokens') || '{}'); } catch(e) { return {}; }
+}
+function saveTokens(t) { localStorage.setItem('taverneTokens', JSON.stringify(t)); }
+
+function genToken() {
+  const arr = new Uint8Array(16);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── UNLOCK APP ──
+function unlockApp() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('adminPanel').classList.remove('open');
+  document.getElementById('app').style.display = 'flex';
+  loadData();
+}
+
+// ── CHECK URL TOKEN ──
+function checkUrlToken() {
+  const params = new URLSearchParams(window.location.search);
+  const token  = params.get('token');
+  if (!token) return;
+  const tokens = getTokens();
+  if (tokens[token] && tokens[token].active) {
+    unlockApp();
   } else {
-    document.getElementById('loginErr').textContent = '✦ Mot de passe incorrect';
+    document.getElementById('loginErr').textContent = '❌ Lien invalide ou révoqué par le MJ.';
   }
 }
 
-document.getElementById('passInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') login();
-});
+// ── ADMIN : setup clé ──
+function detectAdminState() {
+  const hasKey = !!localStorage.getItem('tav_mjkey');
+  document.getElementById('adminSetup').style.display = hasKey ? 'none'  : 'block';
+  document.getElementById('adminAuth' ).style.display = hasKey ? 'block' : 'none';
+  document.getElementById('adminContent').style.display = 'none';
+}
+
+async function setupAdminKey() {
+  const k1 = document.getElementById('setupKey1').value;
+  const k2 = document.getElementById('setupKey2').value;
+  const err = document.getElementById('setupErr');
+  if (!k1 || k1.length < 4) { err.textContent = '⚠ Clé trop courte (4 caractères min)'; return; }
+  if (k1 !== k2)             { err.textContent = '⚠ Les deux clés ne correspondent pas'; return; }
+  const h = await hash(k1);
+  localStorage.setItem('tav_mjkey', h);
+  err.textContent = '';
+  detectAdminState();
+}
+
+async function adminLogin() {
+  const k   = document.getElementById('adminKey').value;
+  const err = document.getElementById('adminErr');
+  const stored = localStorage.getItem('tav_mjkey');
+  if (!stored) { detectAdminState(); return; }
+  const h = await hash(k);
+  if (h === stored) {
+    document.getElementById('adminAuth').style.display    = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    renderTokenList();
+    unlockApp();
+  } else {
+    err.textContent = '❌ Clé incorrecte';
+  }
+}
+
+function adminLogout() {
+  document.getElementById('adminContent').style.display = 'none';
+  document.getElementById('adminAuth').style.display    = 'block';
+  document.getElementById('adminKey').value = '';
+}
+
+function resetAdminKey() {
+  if (!confirm('Supprimer la clé MJ ? Vous devrez en créer une nouvelle.')) return;
+  localStorage.removeItem('tav_mjkey');
+  detectAdminState();
+}
+
+function openAdmin() {
+  document.getElementById('adminPanel').classList.add('open');
+  detectAdminState();
+}
+
+function closeAdmin() {
+  document.getElementById('adminPanel').classList.remove('open');
+}
+
+// ── TOKENS JOUEURS ──
+function creerToken() {
+  const name = document.getElementById('newTokenName').value.trim();
+  if (!name) return;
+  const tokens = getTokens();
+  const token  = genToken();
+  tokens[token] = { name, active: true, created: Date.now() };
+  saveTokens(tokens);
+  document.getElementById('newTokenName').value = '';
+  renderTokenList();
+  afficherQR(token);
+}
+
+function toggleToken(token) {
+  const tokens = getTokens();
+  if (tokens[token]) tokens[token].active = !tokens[token].active;
+  saveTokens(tokens);
+  renderTokenList();
+}
+
+function supprimerToken(token) {
+  if (!confirm('Supprimer cet accès ?')) return;
+  const tokens = getTokens();
+  delete tokens[token];
+  saveTokens(tokens);
+  renderTokenList();
+  document.getElementById('qrPreview').style.display = 'none';
+}
+
+function afficherQR(token) {
+  const base = window.location.href.split('?')[0];
+  const url  = base + '?token=' + token;
+  const tokens = getTokens();
+  document.getElementById('qrPreview').style.display = 'block';
+  document.getElementById('qrUrl').textContent = url;
+  if (typeof QRCode !== 'undefined') {
+    const canvas = document.getElementById('adminQR');
+    QRCode.toCanvas(canvas, url, { width: 180, margin: 1, color: { dark:'#2a1a08', light:'#ffffff' }}, ()=>{});
+  }
+}
+
+function renderTokenList() {
+  const tokens = getTokens();
+  const list   = document.getElementById('tokenList');
+  const keys   = Object.keys(tokens);
+  if (!keys.length) {
+    list.innerHTML = '<div style="font-style:italic;color:var(--ink2);font-size:13px;padding:8px 0;">Aucun accès créé.</div>';
+    return;
+  }
+  list.innerHTML = keys.map(tok => `
+    <div class="token-item">
+      <span class="token-name">👤 ${tokens[tok].name}</span>
+      <span class="${tokens[tok].active ? 'tok-active' : 'tok-dead'}">${tokens[tok].active ? '✓ Actif' : '✗ Révoqué'}</span>
+      <button class="btn" style="padding:3px 8px;font-size:11px;margin:0;" onclick="afficherQR('${tok}')">📱 QR</button>
+      <button class="btn" style="padding:3px 8px;font-size:11px;margin:0;background:${tokens[tok].active?'var(--gold)':'var(--blood)'};color:${tokens[tok].active?'var(--ink)':'white'};" onclick="toggleToken('${tok}')">${tokens[tok].active ? 'Révoquer' : 'Réactiver'}</button>
+      <button class="btn" style="padding:3px 8px;font-size:11px;margin:0;background:transparent;border:1px solid var(--border);color:var(--blood);" onclick="supprimerToken('${tok}')">✕</button>
+    </div>`).join('');
+}
+
+// ── INIT ──
+(function init() {
+  // Charge QRCode lib
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+  document.head.appendChild(s);
+  // Vérifie token URL
+  checkUrlToken();
+})();
 
 // ── NAV ──
 function show(id, btn) {
