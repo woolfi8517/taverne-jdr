@@ -498,29 +498,124 @@ textarea { resize: vertical; min-height: 70px; }
 ::-webkit-scrollbar-track { background: #1a0f05; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-/* ── RESPONSIVE ── */
+/* ── RESPONSIVE MOBILE ── */
 @media (max-width: 768px) {
   :root { --sidebar-w: 0px; }
-  .sidebar { transform: translateX(-200px); transition: transform 0.3s; width: 200px; }
-  .sidebar.open { transform: translateX(0); }
-  .main { margin-left: 0; padding: 16px; }
-  .home-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Sidebar glisse depuis la gauche */
+  .sidebar {
+    transform: translateX(-220px);
+    transition: transform 0.3s ease;
+    width: 220px;
+    z-index: 300;
+    box-shadow: none;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.7);
+  }
+
+  /* Overlay sombre derrière la sidebar ouverte */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 250;
+  }
+  .sidebar-overlay.show { display: block; }
+
+  /* Main sans marge gauche */
+  .main {
+    margin-left: 0;
+    padding: 56px 12px 80px;
+  }
+
+  /* Grilles adaptées */
+  .home-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .home-tile { padding: 12px 8px; }
+  .home-tile .t-icon { font-size: 22px; margin-bottom: 4px; }
+  .home-tile h3 { font-size: 14px; }
+  .home-tile p  { font-size: 11px; }
+
+  .home-banner { padding: 20px 16px; margin-bottom: 14px; }
+  .home-banner h1 { font-size: 26px; }
+  .home-banner p  { font-size: 13px; }
+
+  /* Cards */
+  .card { padding: 14px 14px; margin-bottom: 12px; }
+  .card h2 { font-size: 18px; }
+  .card h3 { font-size: 16px; }
+
+  /* Fiche joueur */
   .stat-grid { grid-template-columns: 1fr 1fr; }
+  div[style*="grid-template-columns:1fr 1fr 1fr"] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Player header */
+  .player-header { flex-direction: column; align-items: stretch; }
+  .player-header select,
+  .player-header input { max-width: 100%; }
+
+  /* Dice sidebar sur mobile → barre fixe en bas */
+  .dice-section {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #1a0f05;
+    border-top: 2px solid var(--border);
+    padding: 8px 10px;
+    z-index: 200;
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 0;
+  }
+  .dice-section p { display: none; }
+  .dice-grid {
+    display: flex !important;
+    gap: 4px;
+    flex-wrap: nowrap;
+  }
+  .dice-btn { padding: 5px 7px; font-size: 12px; }
+  #diceResult {
+    min-height: 32px;
+    width: 48px;
+    font-size: 18px;
+  }
+  .dice-reset { width: auto; margin-top: 0; font-size: 11px; padding: 5px 8px; }
+
+  /* Hamburger visible */
   .hamburger { display: flex; }
+
+  /* Login box */
+  .login-box { padding: 24px 20px; }
+  .login-box h1 { font-size: 22px; }
+
+  /* Admin panel */
+  .admin-box { padding: 20px 16px; }
+
+  /* Buttons full width sur mobile */
+  .btn { padding: 9px 12px; }
 }
 
+/* Hamburger (caché sur desktop) */
 .hamburger {
   display: none;
   position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 200;
+  top: 12px;
+  left: 12px;
+  z-index: 350;
   background: var(--blood);
   border: none;
   color: var(--parch);
   font-size: 20px;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 7px 11px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 /* ── EMPTY STATE ── */
@@ -536,8 +631,8 @@ textarea { resize: vertical; min-height: 70px; }
 /* ── SAVE BADGE ── */
 #saveBadge {
   position: fixed;
-  bottom: 20px;
-  right: 24px;
+  bottom: 60px;
+  right: 16px;
   background: var(--gold);
   color: var(--ink);
   padding: 8px 16px;
@@ -549,6 +644,10 @@ textarea { resize: vertical; min-height: 70px; }
   transition: opacity 0.3s;
   z-index: 500;
   pointer-events: none;
+}
+
+@media (min-width: 769px) {
+  #saveBadge { bottom: 20px; right: 24px; }
 }
 </style>
 </head>
@@ -624,6 +723,7 @@ textarea { resize: vertical; min-height: 70px; }
 <div id="saveBadge">✦ Sauvegardé</div>
 
 <button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <!-- APP -->
 <div id="app">
@@ -1100,11 +1200,18 @@ function show(id, btn) {
       if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active');
     });
   }
-  if (window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open');
+  // Ferme la sidebar sur mobile
+  if (window.innerWidth < 769) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+  }
 }
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar  = document.getElementById('sidebar');
+  const overlay  = document.getElementById('sidebarOverlay');
+  const isOpen   = sidebar.classList.toggle('open');
+  overlay.classList.toggle('show', isOpen);
 }
 
 // ── DATA ──
